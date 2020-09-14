@@ -23,16 +23,10 @@ class App extends Component {
     )
   }
 
-
-
   render() {
-
-    // if (!this.state.error) {
-    //  <div>Error: {this.state.error.message}</div>;
-
     return (
       <>
-        {this.state.loading ? <div>Loading...</div> :
+        {this.state.error ? <div>Error!</div> : this.state.loading ? <div>Loading...</div> :
           <form >
             <label class="col-xs-12 col-sm-12 col-md-6 col-lg-6" >
               BTC:
