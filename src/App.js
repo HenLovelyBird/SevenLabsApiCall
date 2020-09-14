@@ -1,26 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
+const CoinGecko = require('coingecko-api');
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const CoinGeckoClient = new CoinGecko();
+
+
+class App extends Component {
+  state = {
+    bitcoin: 0,
+    usd: 0,
+    loading: true,
+    currentbtcprice: '',
+    error: false
+  }
+
+  componentDidMount = async () => {
+    let data = await CoinGeckoClient.coins.markets();
+    console.log(data)
+    this.setState({ currentbtcprice: data.data[0]["current_price"] })
+    console.log(this.state.currentbtcprice)
+    setTimeout(() => { this.setState({ loading: false }) }, 1500
+    )
+  }
+
+
+
+  render() {
+
+    // if (!this.state.error) {
+    //  <div>Error: {this.state.error.message}</div>;
+
+    return (
+      <>
+        {this.state.loading ? <div>Loading...</div> :
+          <form >
+            <label class="col-xs-12 col-sm-12 col-md-6 col-lg-6" >
+              BTC:
+<input type="number" value={this.state.btc} onChange={this.convertCurrency} />
+            </label>
+
+
+            <label class="col-xs-12 col-sm-12 col-md-6 col-lg-6" >
+              USD:
+<input id="usd" type="number" value={this.state.usd} />
+            </label>
+
+          </form>
+        }
+
+
+      </>);
+  }
+
 }
+
+
 
 export default App;
