@@ -7,7 +7,7 @@ const CoinGeckoClient = new CoinGecko();
 
 class App extends Component {
   state = {
-    bitcoin: 0,
+    bitcoin: "current_price",
     usd: 0,
     loading: true,
     currentbtcprice: '',
@@ -17,10 +17,33 @@ class App extends Component {
   componentDidMount = async () => {
     let data = await CoinGeckoClient.coins.markets();
     console.log(data)
-    this.setState({ currentbtcprice: data.data[0]["current_price"] })
-    console.log(this.state.currentbtcprice)
-    setTimeout(() => { this.setState({ loading: false }) }, 1500
-    )
+    if (data) {
+      this.setState({ error: false })
+      this.setState({ currentbtcprice: data.data[0]["current_price"] })
+      console.log(this.state.currentbtcprice)
+      setTimeout(() => { this.setState({ loading: false }) }, 1500)
+    } else {
+      this.setState({ error: true })
+    }
+  }
+
+  //   convertCurrency(value) {
+  //     //convert From API value BTC to USD
+
+  //     // setState( {
+  //     valueBTC: value
+  //     valueUSD: valueReturnedFromAPIs
+  //   })
+  // }
+
+  updatedPrice(e) {
+    if (e.target.id === 'usd') {
+      let newPrice = e.target.value / this.state.currentbtcprice;
+      document.getElementById("bitcoin").value = newPrice;
+    } else {
+      let newPrice = e.target.value * this.state.currentbtcprice
+      document.getElementById("usd").value = newPrice;
+    }
   }
 
   render() {
@@ -30,13 +53,13 @@ class App extends Component {
           <form >
             <label class="col-xs-12 col-sm-12 col-md-6 col-lg-6" >
               BTC:
-<input type="number" value={this.state.btc} onChange={this.convertCurrency} />
+<input id="bitcoin" type="number" onChange={(e) => this.updatedPrice(e)} />
             </label>
 
 
             <label class="col-xs-12 col-sm-12 col-md-6 col-lg-6" >
               USD:
-<input id="usd" type="number" value={this.state.usd} />
+<input id="usd" type="number" onChange={(e) => this.updatedPrice(e)} />
             </label>
 
           </form>
@@ -47,7 +70,4 @@ class App extends Component {
   }
 
 }
-
-
-
 export default App;
